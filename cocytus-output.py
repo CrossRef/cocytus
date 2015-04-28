@@ -54,7 +54,7 @@ class WikiCiteServer(ApplicationSession):
 while True:
 	job = queue.dequeue()
 	if job is None:
-		print('no job ffound yet, sleeping')
+		print('no job found yet, sleeping')
 		logging.debug(u'No job found yet, sleeping')
 		time.sleep(1)
 		continue

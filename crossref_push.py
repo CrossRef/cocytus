@@ -1,6 +1,10 @@
 import requests
 import urllib
-from PUSH_TOKEN_SECRET import PUSH_TOKEN
+try:
+  from PUSH_TOKEN_SECRET import PUSH_TOKEN
+except ImportError, e:
+  print "Please create PUSH_TOKEN_SECRET.py file"
+
 from config import *
 
 def push_to_crossref(rcdict):

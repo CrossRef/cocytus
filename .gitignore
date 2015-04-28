@@ -1,3 +1,4 @@
 PUSH_TOKEN_SECRET.py
 *.pyc
 *~
+config.py
