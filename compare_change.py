@@ -53,7 +53,7 @@ def comparator(compare_string):
     
 
 def make_family(server_name):
-    parts = map(lambda x: x.lower(), server_name.split('.'))
+    parts = list(map(lambda x: x.lower(), server_name.split('.')))
     if parts[0] == 'commons':
         return ('commons','commons')
     if parts[1] == 'wikidata':
@@ -84,9 +84,9 @@ def get_changes(rcdict):
             from_rev, to_rev = rcdict['revision']['old'], rcdict['revision']['new']
             api_to_hit = pywikibot.Site(lang, fam)
             comparison_response = api_to_hit.compare(from_rev, to_rev)
-            comparison_string = comparison_response['compare']['*']
-            rcdict['doi'] = comparator(comparison_string)
-        #if its a new page
+
+            rcdict['doi'] = comparator(comparison_response)
+        #if it's a new page
         if rcdict['type'] == 'new':
             title = rcdict['title']
             api_to_hit = pywikibot.Site(lang, fam)
@@ -100,33 +100,10 @@ def get_changes(rcdict):
         return rcdict
 
     except pywikibot.data.api.APIError as e:
-        logging.debug(e.message + str(rcdict))
+        logging.debug("API ERROR " + str(e) + str(rcdict))
         return rcdict
     except Exception as e:
-        logging.debug(e.message + str(rcdict))
+        logging.debug("EXCEPTION " + str(e) + str(rcdict))
         return rcdict
 
     
-    
-if __name__ == '__main__':
-    #test
-
-    print get_changes({u'comment': u'sp, replaced: Bogomolov Jr. \u2192 Bogomolov jr. (5), Santiago Ventura Bertomeu \u2192 Santiago Ventura met [[Project:AWB|AWB]]', u'wiki': u'nlwiki', u'type': u'edit', u'server_name': u'nl.wikipedia.org', u'server_script_path': u'/w', u'timestamp': 1420063846, u'title': u'ATP-toernooi van Newport 2009', u'namespace': 0, u'server_url': u'http://nl.wikipedia.org', u'length': {u'new': 10649, u'old': 10658}, u'user': u'Den Hieperboree', u'patrolled': False, u'bot': False, u'id': 66286621, u'minor': False, u'revision': {u'new': 42892757, u'old': 36109902}})
-    print get_changes({'revision':{'old':638680435,'new':638682695}, 'server_name':'en.wikipedia.org', 'type':'edit'})
-    print get_changes({'revision':{'old':638680344,'new':638680435}, 'server_name':'en.wikipedia.org', 'type':'edit'})
-    print get_changes({'revision':{'old':None,'new':638680344}, 'server_name':'en.wikipedia.org', 'type':'new', 'title':'User:Maximilianklein/cocytusbox'})
-    print get_changes({'revision':{'old':639823863,'new':640446344}, 'server_name':'en.wikipedia.org', 'type':'edit'})
-
-    '''
-    testfile = open('dumps.txt','r')
-    lines = testfile.readlines()
-    
-    output = []
-    for line in lines:
-        rcdict = ast.literal_eval(line)
-        result = get_changes(rcdict)
-            #log
-        if result:
-            output.append(result)
-            json.dump(output, open('munged.json','w'))
-    '''

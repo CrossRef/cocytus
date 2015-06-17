@@ -1,0 +1,42 @@
+# Cocytus
+
+## Installation
+
+1. Using virtualenv and pip. Python3 is required.
+
+    mkvirtualenv cocytus3 --python=/usr/local/bin/python3
+    workon cocytus
+    pip install -r requirements.txt
+
+2. Install Redis if developing locally.
+
+3. Download Pywikibot:
+
+  wget http://tools.wmflabs.org/pywikibot/core.zip
+  unzip core.zip
+  mv core/pywikibot pywikibot
+  rm -rf ./core
+
+4. Duplicate `user-config.py.example` to `user-config.py` and substitute your Wikimedia username.
+5. Create `PUSH_TOKEN_SECRET.py` and include `PUSH_TOKEN="YOUR SECRET"`
+
+## Running Locally
+
+Start Redis in a background tab.
+
+    redis-server
+
+Run celery workers. These process the incoming changes, filter and rebroadcast.
+
+    workon cocytus
+    celery -A tasks worker --loglevel=info --autoscale=10,3
+
+Run the listener. This process listens for incoming changes and puts them in the Celery queue.
+
+    python listener.py
+
+Sit back and watch the citations roll in.
+
+## Installation locally
+
+Install Redis.
