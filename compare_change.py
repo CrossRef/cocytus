@@ -1,4 +1,3 @@
-#you need max's patched pywikibot to get site.compare.
 import pywikibot
 from bs4 import BeautifulSoup
 import mwparserfromhell
@@ -18,16 +17,15 @@ def single_comparator(page):
         wikitext = page.get()
     except pywikibot.exceptions.IsRedirectPage:
         redir_target =  page.getRedirectTarget()
-        #only trying one layer of redirect
+        # only trying one layer of redirect
         try:
             wikitext = redir_target.get()
             comparands['redirect'] = redir_target.title()
         except:
             return None
-            #log this
+
     except pywikibot.exceptions.NoPage:
         return None
-        #log this
 
     interests = wikitext_of_interest(wikitext)
     comparands['added'] = list(interests)
@@ -79,11 +77,14 @@ def get_changes(rcdict):
         if 'timestamp' in rcdict:
             rcdict['time'] = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime(rcdict['timestamp']))
         #if it's an edit
-
+        logging.error("TYPE" + str(rcdict['type']))
         if rcdict['type'] == 'edit':
             from_rev, to_rev = rcdict['revision']['old'], rcdict['revision']['new']
+            logging.error("FROM " + str(from_rev) + " TO " + str(to_rev))
             api_to_hit = pywikibot.Site(lang, fam)
             comparison_response = api_to_hit.compare(from_rev, to_rev)
+
+            logging.error(u"COMPARISON RESPONSE" + str(comparison_response))
 
             rcdict['doi'] = comparator(comparison_response)
         #if it's a new page
@@ -92,18 +93,20 @@ def get_changes(rcdict):
             api_to_hit = pywikibot.Site(lang, fam)
             page = pywikibot.Page(api_to_hit, title)
             rcdict['doi'] = single_comparator(page)
-        #log this or do something else
+        
         if rcdict['type'] == 'log':
             logging.debug("logging_event" + str(rcdict))
+            pass
         else:
             logging.debug('Not an edit, new page, or logging event '+str(rcdict))
+            pass
         return rcdict
 
     except pywikibot.data.api.APIError as e:
-        logging.debug("API ERROR " + str(e) + str(rcdict))
+        logging.error("API ERROR " + str(e) + str(rcdict))
         return rcdict
     except Exception as e:
-        logging.debug("EXCEPTION " + str(e) + str(rcdict))
+        logging.error("EXCEPTION " + str(e) + str(rcdict))
         return rcdict
 
     

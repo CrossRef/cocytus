@@ -2,6 +2,7 @@ import socketIO_client
 from celery import Celery
 from tasks import process_change
 
+
 import crossref_push
 import socketIO_client
 import time
@@ -25,22 +26,21 @@ signal.signal(signal.SIGALRM, alarm_handle)
 signal.siginterrupt(signal.SIGALRM, False)
 signal.alarm(alarm_interval)
 
-class WikiNamespace(socketIO_client.BaseNamespace):
+class AllWikiNamespace(socketIO_client.BaseNamespace):
 
   def on_change(self, change):
-    logging.info(u"enqueing "+str(change))
-    while True:
-      try:
-        process_change.delay(change)
-        break
-      except Exception as e:
-        logging.error(e.message)
-        time.sleep(1.0)
+    try:
+      process_change.delay(change)
+    except Exception as e:
+      print("Exception" + str(e))
+      logging.error(e.message)
 
   def on_connect(self):
     self.emit(u"subscribe", u"*")
 
-while True:
-  socketIO = socketIO_client.SocketIO(u'stream.wikimedia.org', 80)
-  socketIO.define(WikiNamespace, u'/rc')
-  socketIO.wait(HEARTBEAT_INTERVAL + 2) # 10 minutes, in prime seconds
+import socketIO_client
+
+socketIO = socketIO_client.SocketIO('stream.wikimedia.org', 80)
+socketIO.define(AllWikiNamespace, '/rc')
+
+socketIO.wait()

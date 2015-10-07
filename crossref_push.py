@@ -1,5 +1,6 @@
 import requests
-import urllib
+import urllib.parse
+
 try:
   from PUSH_TOKEN_SECRET import PUSH_TOKEN
 except ImportError:

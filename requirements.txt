@@ -4,8 +4,6 @@ beautifulsoup4==4.3.2
 celery==3.1.18
 crontab==0.20.2
 daemonize==2.3.1
-flickrapi==2.0
-google==1.5
 httplib2==0.9
 irc==11.0.1
 jaraco.timing==1.1
@@ -15,7 +13,6 @@ mwparserfromhell==0.3.3
 mwcites==0.2.0
 oauthlib==0.7.2
 #oursql==0.9.3.1
-Pillow==2.7.0
 #pydot==1.0.2
 pyparsing==2.0.3
 #pYsearch==3.1
@@ -28,4 +25,3 @@ six==1.9.0
 socketIO-client==0.5.6
 Twisted==14.0.2
 websocket-client==0.23.0
-zope.interface==4.1.2
